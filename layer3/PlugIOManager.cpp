@@ -142,9 +142,13 @@ int PlugIOManagerRegister(PyMOLGlobals * G, vmdplugin_t * header)
 }
 
 static molfile_plugin_t * find_plugin(CPlugIOManager * I, const char * plugin_type) {
-  for (int a = 0; a < I->NPlugin; a++)
+  for (int a = 0; a < I->NPlugin; a++){
+    printf("-- %s\n", I->PluginVLA[a]->name);
+  }
+  for (int a = 0; a < I->NPlugin; a++){
     if(!strcmp(plugin_type, I->PluginVLA[a]->name))
       return I->PluginVLA[a];
+  }
   return NULL;
 }
 

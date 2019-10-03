@@ -181,7 +181,7 @@ PYMOL API
     cmd.load_object(type,object,name,state=0,finish=1,discrete=0,quiet=1)
 
     type = one one of the numeric cmd.loadable types
-    object = 
+    object =
     name = object name (string)
     finish = perform (1) or defer (0) post-processing of structure after load
     discrete = treat each state as an independent, unrelated set of atoms
@@ -222,7 +222,7 @@ PYMOL API
 DESCRIPTION
 
     "space" selects a color palette (or color space).
-    
+
 USAGE
 
     space space [, gamma]
@@ -232,7 +232,7 @@ ARGUMENTS
     space = rgb, cmyk, or pymol: {default: rgb}
 
     gamma = floating point gamma transformation
-    
+
 EXAMPLES
 
     space rgb
@@ -247,7 +247,7 @@ NOTES
     expressed in the CMYK space and vice-versa.  And as a result,
     molecular graphics images prepared using RGB often turn out poorly
     when converted to CMYK, with purplish blues or yellowish greens.
-    
+
     "space cmyk" forces PyMOL to restrict its use of the RGB color
     space to subset that can be reliably converted to CMYK using
     common tools such as Adobe Photoshop.  Thus, what you see on the
@@ -264,11 +264,11 @@ NOTES
 PYMOL API
 
     cmd.space(string space, float gamma)
-    
+
 SEE ALSO
 
     color
-    
+
     '''
         r = DEFAULT_ERROR
 
@@ -428,6 +428,8 @@ SEE ALSO
                         plugin = "trj"
                     else:
                         ftype = loadable.trj
+                elif format == 'nc':
+                    plugin = 'netcdf'
                 else:
                     try:
                         ftype = int(format)
@@ -655,8 +657,8 @@ ARGUMENTS
     the content should be loaded, or 0 for append {default:0}
 
     format = pdb, ccp4, etc. {default: use file extension}): format of
-    data file    
-    
+    data file
+
 EXAMPLES
 
     load 1dn2.pdb
@@ -664,7 +666,7 @@ EXAMPLES
     load file001.pdb, ligand
 
     load http://delsci.com/sample.pdb
-    
+
 NOTES
 
     The file extension is used to determine the format unless the
@@ -690,7 +692,7 @@ PYMOL API
     cmd.load(string filename, string object-name, integer state,
              string format, int finish, int discrete, int quiet,
              int multiplex, int zoom, int partial)
-    
+
 SEE ALSO
 
     save, load_traj, fetch
@@ -852,7 +854,7 @@ DESCRIPTION
 
 USAGE
 
-    load_embedded [ key [, name [, state [, finish [, discrete [, quiet ]]]]]]        
+    load_embedded [ key [, name [, state [, finish [, discrete [, quiet ]]]]]]
 
 EXAMPLE
 
@@ -870,7 +872,7 @@ EXAMPLE
 NOTES
 
     This approach only works with text data files.
-    
+
     '''
         if object_props or atom_props:
             print(' Warning: properties are not supported in Open-Source PyMOL')
@@ -1020,7 +1022,7 @@ DESCRIPTION
 
 PYMOL API ONLY
 
-    cmd.read_pdbstr( string pdb-content, string object name 
+    cmd.read_pdbstr( string pdb-content, string object name
         [ ,int state [ ,int finish [ ,int discrete ] ] ] )
 
 NOTES
@@ -1059,7 +1061,7 @@ DESCRIPTION
 
 PYMOL API ONLY
 
-    cmd.read_mol2str( string mol2-content, string object name 
+    cmd.read_mol2str( string mol2-content, string object name
         [ ,int state [ ,int finish [ ,int discrete ] ] ] )
 
 NOTES
@@ -1098,7 +1100,7 @@ DESCRIPTION
 
 PYMOL API ONLY
 
-    cmd.read_xplorstr( string xplor-content, string object name 
+    cmd.read_xplorstr( string xplor-content, string object name
         [ ,int state ] )
 
 NOTES
@@ -1187,7 +1189,7 @@ PYMOL API
         discrete = bool: make discrete multi-state object
         multiplex = bool: split states into objects (like split_states)
         zoom = int: zoom to new loaded object
-        type = str: fofc, 2fofc, pdb, pdb1, ... 
+        type = str: fofc, 2fofc, pdb, pdb1, ...
         path = str: fetch_path
         file = str or file: file name or open file handle
         '''
@@ -1387,7 +1389,7 @@ PYMOL API
     cmd.fetch(string code, string name, int state, init finish,
               int discrete, int multiplex, int zoom, string type,
               int async, string path, string file, int quiet)
-              
+
 NOTES
 
     When running in interactive mode, the fetch command loads
@@ -1399,7 +1401,7 @@ NOTES
 
     Fetch requires a direct connection to the internet and thus may
     not work behind certain types of network firewalls.
-    
+
         '''
         state, finish, discrete = int(state), int(finish), int(discrete)
         multiplex, zoom = int(multiplex), int(zoom)

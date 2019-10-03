@@ -194,6 +194,9 @@ int molfile_xyzplugin_init(void);
 int molfile_xyzplugin_register(void *,vmdplugin_register_cb);
 int molfile_xyzplugin_fini(void);
 
+int molfile_netcdfplugin_init(void);
+int molfile_netcdfplugin_register(void *,vmdplugin_register_cb);
+int molfile_netcdfplugin_fini(void);
 
     int PlugIOManagerRegister(PyMOLGlobals *G, vmdplugin_t *);
 
@@ -266,6 +269,8 @@ if(ok) ok = ok && (molfile_xbgfplugin_init() == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_xsfplugin_init() == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_xyzplugin_init() == VMDPLUGIN_SUCCESS);
 
+if(ok) ok = ok && (molfile_netcdfplugin_init() == VMDPLUGIN_SUCCESS);
+
        if(ok) {
 if(ok) ok = ok && (molfile_abinitplugin_register(G,(vmdplugin_register_cb)PlugIOManagerRegister) == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_avsplugin_register(G,(vmdplugin_register_cb)PlugIOManagerRegister) == VMDPLUGIN_SUCCESS);
@@ -330,6 +335,8 @@ if(ok) ok = ok && (molfile_vtkplugin_register(G,(vmdplugin_register_cb)PlugIOMan
 if(ok) ok = ok && (molfile_xbgfplugin_register(G,(vmdplugin_register_cb)PlugIOManagerRegister) == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_xsfplugin_register(G,(vmdplugin_register_cb)PlugIOManagerRegister) == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_xyzplugin_register(G,(vmdplugin_register_cb)PlugIOManagerRegister) == VMDPLUGIN_SUCCESS);
+
+if(ok) ok = ok && (molfile_netcdfplugin_register(G,(vmdplugin_register_cb)PlugIOManagerRegister) == VMDPLUGIN_SUCCESS);
 
        }
        return ok;
@@ -403,6 +410,8 @@ if(ok) ok = ok && (molfile_vtkplugin_fini() == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_xbgfplugin_fini() == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_xsfplugin_fini() == VMDPLUGIN_SUCCESS);
 if(ok) ok = ok && (molfile_xyzplugin_fini() == VMDPLUGIN_SUCCESS);
+
+if(ok) ok = ok && (molfile_netcdfplugin_fini() == VMDPLUGIN_SUCCESS);
 
        return ok;
     }
