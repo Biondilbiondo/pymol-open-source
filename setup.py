@@ -269,7 +269,7 @@ ext_comp_args = [
     "-Og" if DEBUG else "-O3",
     "-fcommon",
 ]
-ext_link_args = []
+ext_link_args = ["-lnetcdf"]
 ext_objects = []
 data_files = []
 ext_modules = []
