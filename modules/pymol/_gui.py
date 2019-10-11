@@ -9,6 +9,60 @@ import sys
 import os
 import webbrowser
 
+from .mdanalysis_manager import MDAnalysisManager
+
+
+
+def mda_session_save_as(gui):
+    """
+    This highjacks the saving mechanism. It takes over the GUI save_session, only to give it back and retrieve
+    the filename of the saved file. If it is a session .pse, we add our MDAnalysis.
+
+    fixme - This is already done in the file exporting.py with with the command mda_save.
+    This mda_save command should be plugged in instead of this function.
+    """
+    # use the legacy system to save the typical PyMOL data
+    gui.session_save_as()
+    # the filename created
+    created_file = gui.recent_filenames[0]
+    if not created_file.endswith('.pse'):
+        return
+
+    # fixme - this is going to crash if mdanalysis is not installed
+
+    # get the MDAnalysis metadata
+    json_data = MDAnalysisManager.toJSON()
+
+    # Use json to serialise the data - MDAnalysis cannot be serialised right now
+    # .mse stands for MDAnalysis sessions
+    corresponding_filename = os.path.splitext(created_file)[0] + '.mse'
+    with open(corresponding_filename, 'w') as F:
+        F.write(json_data)
+
+
+def mda_file_open(gui):
+    """
+    We highjack the opening mechanism to load MDAnalysis session along the .pse session.
+
+    fixme - This is already done in the file importing.py with with the command mda_load.
+    This mda_load command should be plugged in instead of this function.
+    """
+    gui.file_open()
+    last_used_file = gui.recent_filenames[0]
+
+    if last_used_file.endswith('.mse'):
+        print('Error: Please load the corresponding .pse session file instead.')
+        return
+
+    if not last_used_file.endswith('.pse'):
+        return
+
+    # load the MDAnalysis session
+    corresponding_mse = os.path.splitext(last_used_file)[0] + '.mse'  # .mse stands for MDAnalysis sessions
+    metadata = open(corresponding_mse).read()
+    MDAnalysisManager.fromJSON(metadata)
+
+
 class PyMOLDesktopGUI(object):
     '''Superclass for PyMOL Desktop Applications'''
 
@@ -81,12 +135,12 @@ class PyMOLDesktopGUI(object):
                     ('command', 'Ignore .pymolrc and plugins (-k)', lambda: self.new_window(('-k',))),
                 ]),
                 ('separator',),
-                ('command', 'Open...',                      self.file_open),
+                ('command', 'Open...',                      lambda: mda_file_open(self)),
                 ('open_recent_menu',),
                 ('command', 'Get PDB...',                   self.file_fetch_pdb),
                 ('separator',),
                 ('command', 'Save Session',                 self.session_save),
-                ('command', 'Save Session As...',           self.session_save_as),
+                ('command', 'Save Session As...',           lambda: mda_session_save_as(self)),
                 ('separator',),
                 ('command', 'Export Molecule...',             self.file_save),
                 ('command', 'Export Map...',                  self.file_save_map),

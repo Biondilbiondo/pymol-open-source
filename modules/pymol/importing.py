@@ -23,6 +23,12 @@ if True:
     import traceback
     import pymol
     cmd = sys.modules["pymol.cmd"]
+    from .mdanalysis_manager import MDAnalysisManager
+    import MDAnalysis as mda
+    import numpy as np
+    import shutil
+    import importlib
+
     from . import selector
     from . import colorprinting
     from .cmd import _cmd, \
@@ -352,6 +358,7 @@ PYMOL API
         lst.extend(list(arg))
         return _self.load_object(*lst, **kw)
 
+
     def load_traj(filename,object='',state=0,format='',interval=1,
                       average=1,start=1,stop=-1,max=-1,selection='all',image=1,
                       shift="[0.0,0.0,0.0]",plugin="",_self=cmd):
@@ -443,19 +450,115 @@ SEE ALSO
                 if not len(oname): # safety
                     oname = 'obj01'
 
-            if ftype>=0 or plugin:
+            if (ftype>=0 or plugin):
                 r = _cmd.load_traj(_self._COb,str(oname),fname,int(state)-1,int(ftype),
                                          int(interval),int(average),int(start),
                                          int(stop),int(max),str(selection),
                                          int(image),
                                          float(shift[0]),float(shift[1]),
                                          float(shift[2]),str(plugin))
+
             else:
                 raise pymol.CmdException("unknown format '%s'" % format)
         finally:
             _self.unlock(r,_self)
         if _self._raising(r,_self): raise pymol.CmdException
+
         return r
+
+    def mda_load(filename, label=None):
+        if filename.endswith('.pse'):
+            # load PyMOL session .pse
+            load(filename)
+
+            # load MDAnalysis session
+            # .mse stands for MDAnalysis sessions
+            corresponding_mse = os.path.splitext(filename)[0] + '.mse'
+            metadata = open(corresponding_mse).read()
+            MDAnalysisManager.fromJSON(metadata)
+
+            from .mda_graph_manager import GraphManager
+            GraphManager.update_menu()
+
+            return
+
+
+        # fixme - temporary hack: we want the user to use mda_load for only a single frame
+        # otherwise PyMOL will try to read all frames, which could overload the RAM memory
+        import MDAnalysis as mda
+        tmp = mda.Universe(filename)
+        if len(tmp.trajectory) > 1:
+            raise Exception('mda_load has to be used with a single frame topology (it cannot read a trajectory)')
+        # fixme - end of a temporary hack
+
+        cmd.get_unused_name('obj')
+
+        # Load with PyMOL the same file
+        cmd.load(filename)
+        # Get the label used for the simulation
+        if not label:
+            label = cmd.get_object_list()[-1]
+        # Otherwise the Atom Names are rearranged (which would break everything)
+        cmd.set('retain_order', 1, label)
+        # Load with MDAnalysis too
+        MDAnalysisManager.load(label, filename)
+
+        return None
+
+
+    def mda_load_traj(filename, label=None, interval=1, start=1, stop=-1,selection='all',_self=cmd):
+        filename = unquote(filename)
+
+        noext, ext, format_guessed, zipped = filename_to_format(filename)
+        # get object name
+        if not label:
+            label = _guess_trajectory_object(noext, _self)
+            if not len(label):  # safety
+                label = 'obj01'
+
+        MDAnalysisManager.loadTraj(label, filename)
+
+        # None means that the trajectory was loaded successfully (?)
+        # Based on "load_traj"
+        return None
+
+
+    # MPP
+    def mda_rmsd(label, selection="backbone"):
+        '''
+     DESCRIPTION
+
+         "mda_rmsd" computes RMSD for the label, saves and plots the data. If the selection is not provided,
+         all atoms are used for both, the finding and quantification of the RMSD.
+
+     USAGE
+
+         mda_rmsd label, [selection]
+
+     PYMOL API
+
+         cmd.mda_rmsd(label)
+         cmd.mda_rmsd(label, selection='backbone')
+
+     NOTES
+
+         This is a prototype that relies on MDAnalysis.
+        '''
+
+        from MDAnalysis.analysis.rms import RMSD
+        from .mda_graph_manager import GraphManager
+
+        atom_group = MDAnalysisManager.getSystem(label)
+        sel = atom_group.select_atoms(selection)
+        R = RMSD(sel, sel,# superimpose on whole backbone of the whole protein
+                 # select=selection,
+                 )
+        R.run()
+
+        GraphManager.save_graph(label, R.rmsd, GraphManager.GRAPH_TYPES.RMSD.name)
+        GraphManager.plot_graph(label, GraphManager.GRAPH_TYPES.RMSD.name)
+
+        return None
 
     def _processALN(fname,quiet=1,_self=cmd):
         legal_dict = {}
@@ -815,6 +918,7 @@ SEE ALSO
             _self.unlock(r,_self)
         if _self._raising(r,_self): raise pymol.CmdException
         return r
+
 
     def load_pse(filename, partial=0, quiet=1, format='pse', _self=cmd):
         try:

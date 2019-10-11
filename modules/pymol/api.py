@@ -24,8 +24,12 @@ from .importing import \
       read_pdbstr,        \
       read_xplorstr,      \
       fetch,              \
-      set_session,        \
-      space
+      set_session, \
+      space, \
+      mda_load,\
+      mda_load_traj,\
+      mda_rmsd
+# MPP ^
 
 #--------------------------------------------------------------------
 from . import creating
@@ -158,7 +162,8 @@ from .selecting import \
       indicate,           \
       select,             \
       select_list,        \
-      pop
+      pop,                \
+      mda_select
 
 #--------------------------------------------------------------------
 from . import exporting
@@ -176,7 +181,12 @@ from .exporting import \
       multifilenamegen,   \
       multisave,          \
       png,                \
+<<<<<<< HEAD
       save
+=======
+      save,               \
+      mda_save
+>>>>>>> 2c8ff556eb55eaa45729be747a8f46c7667fe320
 
 #--------------------------------------------------------------------
 from . import editing

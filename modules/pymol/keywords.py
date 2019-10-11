@@ -224,6 +224,7 @@ def get_command_keywords(self_cmd=cmd):
         'rms'           : [ self_cmd.rms               , 0 , 0 , ''  , parsing.STRICT ],
         'rms_cur'       : [ self_cmd.rms_cur           , 0 , 0 , ''  , parsing.STRICT ],
         'save'          : [ self_cmd.save              , 0 , 0 , ''  , parsing.SECURE ],
+        'mda_save': [self_cmd.mda_save, 0, 0, '', parsing.SECURE],
         'scene'         : [ self_cmd.scene             , 0 , 0 , ''  , parsing.STRICT ],
         'scene_order'   : [ self_cmd.scene_order       , 0 , 0 , ''  , parsing.STRICT ],
         'sculpt_purge'  : [ self_cmd.sculpt_purge      , 0 , 0 , ''  , parsing.STRICT ],
@@ -315,6 +316,13 @@ def get_command_keywords(self_cmd=cmd):
         'movie.sweep'   : [ self_cmd.movie.sweep       , 0 , 0 , ''  , parsing.STRICT ],
         'movie.tdroll'  : [ self_cmd.movie.tdroll      , 0 , 0 , ''  , parsing.STRICT ],
         'movie.zoom'    : [ self_cmd.movie.zoom        , 0 , 0 , ''  , parsing.STRICT ],
+        # MDAnalysis
+        'mda_rmsd': [self_cmd.mda_rmsd, 0, 0, '', parsing.STRICT],
+        'mda_load': [self_cmd.mda_load, 0, 0, '', parsing.STRICT],
+        'mda_load_traj': [self_cmd.mda_load_traj, 0, 0, '', parsing.STRICT],
+        'mda_select': [self_cmd.mda_select, 0, 0, '', parsing.STRICT],
+        # activate metaphorics extensions
+        #   'metaphorics'   : [ self_cmd.metaphorics       , 0 , 0 , ''  , parsing.STRICT ],
         }
 
 def fix_list(kw_list):
