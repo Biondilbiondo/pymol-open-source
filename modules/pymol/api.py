@@ -181,12 +181,8 @@ from .exporting import \
       multifilenamegen,   \
       multisave,          \
       png,                \
-<<<<<<< HEAD
-      save
-=======
       save,               \
       mda_save
->>>>>>> 2c8ff556eb55eaa45729be747a8f46c7667fe320
 
 #--------------------------------------------------------------------
 from . import editing
